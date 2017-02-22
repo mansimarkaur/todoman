@@ -313,9 +313,7 @@ def move(ctx, list, ids):
               'Defaults to true.')
 @click.option('--due', default=None, help='Only show tasks due in DUE hours',
               type=int)
-def list(
-    ctx, lists, all, urgent, location, category, grep, sort, reverse, due,
-         ):
+def list(ctx, sort=None, **kwargs):
     """
     List unfinished tasks.
 
@@ -330,20 +328,11 @@ def list(
     This is the default action when running `todo'.
     """
 
-    sort = sort.split(',') if sort else None
+    if sort:
+        sort = sort.split(',')
 
     db = ctx.obj['db']
-    todos = db.todos(
-        due=due,
-        all=all,
-        category=category,
-        grep=grep,
-        lists=lists,
-        location=location,
-        reverse=reverse,
-        sort=sort,
-        urgent=urgent,
-    )
+    todos = db.todos(**kwargs)
 
     for todo in todos:
         click.echo(ctx.obj['formatter'].compact(todo))
